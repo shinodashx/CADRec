@@ -1,0 +1,82 @@
+common:
+  model:
+    base_model_path: Qwen/Qwen2-VL-2B-Instruct
+    pc_encoder_type: utonia
+  point_cloud:
+    n_points: 8192
+    n_point_tokens: 512
+    part_points_per_bbox: 64
+  utonia:
+    scale: 2.0
+    normalize_coord: true
+    use_normal: true
+
+train:
+  paths:
+    data_path: /data/songhx24/Dataset
+    log_path: /data/songhx24/Project/utonia_cadgen/utonia_grounding/workdir_groundingV2
+    resume: null
+    model_path: /data/songhx24/Project/cadgen_utonia/work_dirs_utonia0319/checkpoint-40000
+    # model_path: null
+  task:
+    mode: pc
+    use_text: false
+    multi_task: true
+    balanced: true
+    deepcad: true
+    two_stage: false
+  dataset:
+    name: deepcadv22_multitask
+    train_split: train
+    eval_split: val
+    deepcad_root_subdir: data/cad_cadqueryV1.2
+    deepcadv2_root_subdir: data/cad_cadqueryV2.2
+    cadrecode_v15our_root_subdir: /nas1/songhx24/Dataset/CAARECODE/cad-recode-v1.5-process-new
+    deepcad_split_json: train_val_test_split_V1.2.json
+    cad_recode_subdir: cad-recode-v1.5
+    text2cad_subdir: text2cad
+    normalize_std_pc: 100.0
+    train_noise_scale_pc: 0.01
+    eval_noise_scale_pc: null
+    img_size: 128
+    normalize_std_img: 200.0
+    noise_scale_img: -1
+    num_imgs: 4
+  dataloader:
+    batch_size: 4
+    gradient_accumulation_steps: 8
+    num_workers: 8
+  trainer:
+    dataloader_num_workers: 8
+    max_steps: 120000
+    learning_rate: 0.0003
+    warmup_steps: 1000
+    weight_decay: 0.01
+    logging_steps: 100
+    save_total_limit: 20
+    save_steps: 5000
+    eval_steps: 5000
+    per_device_train_batch_size: 4
+    gradient_accumulation_steps: 8
+  contrastive:
+    enabled: true
+    lambda: 0.05
+    temperature: 0.07
+    proj_dim: 128
+    queue_size: 4096
+    momentum: 0.999
+    interval: 1
+    max_negatives: 1024
+  bbox_grounding:
+    enabled: true
+    normalize_std: 100.0
+    max_boxes: 0
+    lambda: 0.1
+    lambda_box: 1.0
+    lambda_mask: 0.25
+    match_mask_weight: 0.5
+    mask_eps: 0.01
+
+runtime:
+  save_config_name: run_config.yaml
+  save_timestamped_copy: true
