@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00.000 --> 00:03.000
+CADRec reconstructs editable CAD from point clouds.
+
+00:03.000 --> 00:08.000
+The model uses local geometry to recursively split each shape.
+
+00:08.000 --> 00:10.000
+We generate CAD code per part,
+
+00:10.000 --> 00:13.000
+then merge parts in global coordinates.
+
+00:13.000 --> 00:19.500
+The results are structured, editable CAD sequences for diverse shapes.

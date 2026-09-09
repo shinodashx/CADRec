@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>CADRec — Recursive CAD Sequence Reconstruction</title>
+  <meta name="description" content="CADRec reconstructs editable CAD sequences from point clouds through recursive part decomposition and localized geometric contexts. SIGGRAPH Asia 2026 / ACM TOG.">
+  <link rel="canonical" href="https://shinodashx.github.io/CADRec/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CADRec: Reconstructing a CAD Sequence Recursively with Localized Geometric Contexts">
+  <meta property="og:description" content="From point clouds to structured, editable CAD. A recursive reconstruction framework with localized geometric contexts.">
+  <meta property="og:url" content="https://shinodashx.github.io/CADRec/">
+  <meta property="og:image" content="https://shinodashx.github.io/CADRec/assets/teaser.webp">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="wordmark" href="#" aria-label="CADRec home"><img src="assets/favicon.svg" width="28" height="28" alt="">CAD<span>Rec</span></a>
+      <div class="nav-links"><a href="#overview">Overview</a><a href="#method">Method</a><a href="#results">Results</a><a href="#citation">Citation</a></div>
+      <a class="nav-code" href="https://github.com/shinodashx/CADRec">Code <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero container" aria-labelledby="paper-title">
+      <p class="venue"><span class="venue-dot" aria-hidden="true"></span>SIGGRAPH Asia 2026 <span class="venue-divider">/</span> ACM Transactions on Graphics</p>
+      <h1 id="paper-title"><span class="hero-name">CAD<span>Rec</span></span><span class="hero-title">Reconstructing a CAD Sequence Recursively<br class="desktop-break"> with Localized Geometric Contexts</span></h1>
+      <p class="authors"><a href="mailto:songhaoxuan24@mails.ucas.ac.cn">Haoxuan Song<sup>1</sup></a><span>Bingchen Yang<sup>2</sup></span><span>Jun Xiao<sup>1</sup></span><a href="mailto:haiyong.jiang@ucas.ac.cn">Haiyong Jiang<sup>1,✉</sup></a></p>
+      <p class="affiliations"><span><sup>1</sup> University of Chinese Academy of Sciences</span><span><sup>2</sup> Nanyang Technological University</span></p>
+      <p class="corresponding">✉ Corresponding author</p>
+      <div class="actions">
+        <a class="button primary" href="files/CADRec.pdf"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8zM14 3v5h5M8 12h8M8 16h6"/></svg>Paper <span class="button-meta">PDF</span></a>
+        <a class="button" href="https://github.com/shinodashx/CADRec"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18"/></svg>Code <span aria-hidden="true">↗</span></a>
+        <a class="button" href="#overview"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7z"/></svg>Video <span class="button-meta">20s</span></a>
+      </div>
+      <p class="hero-summary">From point clouds to <strong>structured, editable CAD.</strong><br>Decompose globally. Reconstruct locally. Compose recursively.</p>
+      <figure class="teaser">
+        <a href="files/teaser.pdf" target="_blank" rel="noopener" aria-label="Open the reconstruction showcase figure as a full-resolution PDF"><img src="assets/teaser.webp" width="2600" height="1066" fetchpriority="high" alt="Diverse blue CAD reconstructions alongside two part hierarchies showing recursive bounding-box prediction, local parts, and assembled CAD shapes."></a>
+        <figcaption><strong>One shape. A hierarchy of possibilities.</strong> CADRec recovers diverse CAD models by recursively localizing parts and composing their predicted programs. <a href="files/teaser.pdf" target="_blank" rel="noopener">View full resolution ↗</a></figcaption>
+      </figure>
+    </section>
+
+    <section id="overview" class="section tinted">
+      <div class="container">
+        <div class="section-heading"><span class="eyebrow">01 / Overview</span><h2>A complex shape.<br>A sequence of simpler problems.</h2><p>Instead of predicting one long, flat script, CADRec reconstructs a hierarchy of spatially localized parts.</p></div>
+        <figure class="video-figure">
+          <video controls playsinline preload="none" poster="assets/video-poster.webp" width="1920" height="1080" aria-label="CADRec 20-second narrated research overview">
+            <source src="assets/overview.mp4" type="video/mp4">
+            <track kind="captions" src="assets/overview.en.vtt" srclang="en" label="English">
+            Your browser does not support embedded video. <a href="assets/overview.mp4">Download the overview.</a>
+          </video>
+          <figcaption><span>CADRec in 20 seconds · Narrated overview · English captions available</span><a href="assets/overview.mp4" download>Download video ↓</a></figcaption>
+        </figure>
+        <details class="transcript"><summary>Video transcript</summary><p>CADRec reconstructs editable CAD from point clouds. The model uses local geometry to recursively split each shape. We generate CAD code per part, then merge parts in global coordinates. The results are structured, editable CAD sequences for diverse shapes.</p></details>
+        <div class="abstract-block"><h3>Abstract</h3>
+          <p>We present CADRec, a recursive CAD sequence reconstruction framework based on a hierarchically defined CAD DSL. This method addresses two limitations of previous methods. First, the flat, lengthy script representation of LLM-based reconstruction methods hinders generalization and does not take into account the reuse of code snippets. Second, existing one-shot and iterative geometric context encodings lack the structural clues necessary to accurately localize the geometric context for subsequent sequence reconstruction.</p>
+          <p>CADRec recursively decomposes the input shape into spatially localized parts and reconstructs each part with a local CADQuery program based on a hierarchical CAD DSL. At each node of the hierarchy, the model decides whether to further split the current part into child parts or stop and synthesize its leaf-level CAD script. The generated local programs are then mapped back to the global coordinate frame and composed into the final CAD model.</p>
+          <p>This hierarchical formulation turns global CAD reconstruction into a sequence of simpler local part prediction problems, reducing geometric complexity while preserving the structural organization of the design. To support this process, we encode localized point-cloud context and use an MLLM-based decoder to predict decomposition decisions and CAD programs. We further train the model with geometry-aware objectives that encourage consistent part decomposition and spatially grounded predictions.</p>
+          <p>Experiments on standard CAD reconstruction benchmarks demonstrate that CADRec improves both geometric fidelity and program validity over prior sequence- and code-based baselines.</p>
+          <p class="small-note">Abridged from the paper. See the full paper for the complete abstract and experimental details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="method" class="section container">
+      <div class="section-heading"><span class="eyebrow">02 / Method</span><h2>Think in parts. Build a whole.</h2><p>A shared model makes two decisions at every node: split into child parts, or stop and generate a local CAD program.</p></div>
+      <figure class="paper-figure"><a href="files/pipeline.pdf" target="_blank" rel="noopener" aria-label="Open the pipeline figure as a full-resolution PDF"><img src="assets/pipeline.webp" width="2600" height="927" loading="lazy" alt="Recursive pipeline: a point encoder and text tokenizer condition Qwen2-VL-2B, which predicts SPLIT with child bounding boxes or STOP with a local CADQuery script."></a><figcaption>Localized geometry guides both the decomposition decision and the next CAD DSL prediction. Child parts return to the active queue until every leaf is resolved. <a href="files/pipeline.pdf" target="_blank" rel="noopener">View full resolution ↗</a></figcaption></figure>
+      <div class="steps">
+        <article><span class="step-number">01</span><h3>Localize</h3><p>Crop and normalize the point cloud inside the current bounding box. Encode the local geometry with Utonia and positional features.</p></article>
+        <article><span class="step-number">02</span><h3>Split or synthesize</h3><p>Qwen2-VL-2B predicts child bounding boxes and Boolean operations, or generates a leaf-level CADQuery program.</p></article>
+        <article><span class="step-number">03</span><h3>Transform & compose</h3><p>Map local programs back to the global coordinate frame and assemble them bottom-up through union and difference operations.</p></article>
+      </div>
+      <div class="subsection-heading"><h3>From a flat script to a part hierarchy</h3><p>The hierarchical CAD DSL separates structural reasoning from elementary sketch–extrude code, making intermediate parts explicit and reusable.</p></div>
+      <figure class="paper-figure"><a href="files/code.pdf" target="_blank" rel="noopener" aria-label="Open the CAD DSL comparison as a full-resolution PDF"><img src="assets/code.webp" width="2600" height="1315" loading="lazy" alt="Comparison of a flat CAD-Recode script with CADRec's hierarchical DSL, showing nested parts, bounding boxes, and local CADQuery code blocks."></a><figcaption>Each non-leaf part stores child bounding boxes and Boolean operations. Each leaf stores an elementary CADQuery code block; post-processing produces the executable global script.</figcaption></figure>
+      <div class="training-notes"><div><span class="eyebrow">Geometry-aware learning</span><h3>Keep local predictions grounded.</h3></div><p><strong>Contrastive geometry regularization</strong> aligns cropped or perturbed observations with the complete geometry of the same part. <strong>Box and point-mask grounding</strong> encourages predicted boxes to match their local geometric support. Both complement token prediction during training.</p></div>
+    </section>
+
+    <section id="results" class="section tinted">
+      <div class="container">
+        <div class="section-heading"><span class="eyebrow">03 / Results</span><h2>Local reasoning.<br>Stronger generalization.</h2><p>Evaluated on DeepCAD and the unseen Fusion360 test set, with both DeepCAD-trained and CAD-Recode-trained models.</p></div>
+        <div class="metrics" aria-label="CADRec on Fusion360, trained on DeepCAD">
+          <div><span class="metric-value">0.81</span><span>Mean Chamfer Distance ↓</span></div>
+          <div><span class="metric-value">85.8<span>%</span></span><span>Intersection over Union ↑</span></div>
+          <div><span class="metric-value">0.1<span>%</span></span><span>Invalid Rate ↓</span></div>
+        </div>
+        <p class="metric-context">Trained on DeepCAD → tested on Fusion360 · Single reconstruction per input · CD × 10³</p>
+        <div class="subsection-heading"><h3>Reconstruction, side by side</h3><p>Compare point-cloud inputs, prior methods, CADRec, and ground-truth geometry. Open a figure to inspect the fine details.</p></div>
+        <div class="tabs" role="tablist" aria-label="Qualitative comparison dataset" hidden>
+          <button id="tab-fusion" type="button" role="tab" aria-controls="panel-fusion" aria-selected="true">Fusion360 <span>Cross-dataset</span></button>
+          <button id="tab-deepcad" type="button" role="tab" aria-controls="panel-deepcad" aria-selected="false" tabindex="-1">DeepCAD <span>In-domain</span></button>
+        </div>
+        <div id="panel-fusion" role="tabpanel" aria-labelledby="tab-fusion" tabindex="0"><figure class="paper-figure comparison"><a href="files/fusion360comp.pdf" target="_blank" rel="noopener" aria-label="Open the Fusion360 comparison as a full-resolution PDF"><img src="assets/fusion360comp.webp" width="2600" height="1375" loading="lazy" alt="Fusion360 qualitative comparison, with rows for Input, PS-CAD, CAD-Recode, Cadrille, Ours, and ground truth across thirteen shapes."></a><figcaption><strong>Fusion360.</strong> PS-CAD is trained on DeepCAD; the other methods are trained on CAD-Recode. <a href="files/fusion360comp.pdf" target="_blank" rel="noopener">View full resolution ↗</a></figcaption></figure></div>
+        <div id="panel-deepcad" role="tabpanel" aria-labelledby="tab-deepcad" tabindex="0"><figure class="paper-figure comparison"><a href="files/deepcad1.pdf" target="_blank" rel="noopener" aria-label="Open the DeepCAD comparison as a full-resolution PDF"><img src="assets/deepcad1.webp" width="2600" height="1291" loading="lazy" alt="DeepCAD qualitative comparison of point-cloud inputs, PS-CAD, CAD-Recode, Cadrille, CADRec, and ground-truth CAD models."></a><figcaption><strong>DeepCAD.</strong> PS-CAD is trained on DeepCAD; the other methods are trained on CAD-Recode. <a href="files/deepcad1.pdf" target="_blank" rel="noopener">View full resolution ↗</a></figcaption></figure></div>
+        <div class="subsection-heading"><h3>Quantitative comparison</h3><p>Results from Table 1 of the paper. Training sets are listed explicitly to distinguish the two evaluation settings.</p></div>
+        <div class="table-scroll" tabindex="0" role="region" aria-label="Quantitative results table, scroll horizontally on narrow screens">
+          <table>
+            <caption>Reconstruction on DeepCAD and Fusion360</caption>
+            <thead><tr><th rowspan="2" scope="col">Method</th><th rowspan="2" scope="col">Training set</th><th colspan="4" scope="colgroup">DeepCAD</th><th colspan="4" scope="colgroup">Fusion360</th></tr><tr><th scope="col">Mean CD ↓</th><th scope="col">Med. CD ↓</th><th scope="col">IoU ↑</th><th scope="col">IR ↓</th><th scope="col">Mean CD ↓</th><th scope="col">Med. CD ↓</th><th scope="col">IoU ↑</th><th scope="col">IR ↓</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">DeepCAD</th><td>DeepCAD</td><td>42.5</td><td>9.64</td><td>46.7</td><td>7.1</td><td>330</td><td>89.2</td><td>39.9</td><td>25.2</td></tr>
+              <tr><th scope="row">Point2Cyl</th><td>DeepCAD</td><td>10.2</td><td>4.27</td><td>73.8</td><td>3.9</td><td>—</td><td>4.18</td><td>67.5</td><td>3.2</td></tr>
+              <tr><th scope="row">HNC-CAD</th><td>DeepCAD</td><td>10.91</td><td>8.64</td><td>65.3</td><td>5.6</td><td>13.8</td><td>36.8</td><td>63.5</td><td>7.3</td></tr>
+              <tr><th scope="row">PartCAD<sup>#</sup></th><td>DeepCAD</td><td>4.93</td><td>0.24</td><td>—</td><td>0.9</td><td>—</td><td>1.13</td><td>—</td><td>1.3</td></tr>
+              <tr><th scope="row">PS-CAD</th><td>DeepCAD</td><td>2.10</td><td>0.22</td><td>—</td><td>0.4</td><td>5.70</td><td>0.94</td><td>—</td><td>1.5</td></tr>
+              <tr><th scope="row">CAD-Recode</th><td>DeepCAD</td><td>3.37</td><td>0.25</td><td>78.1</td><td>1.0</td><td>6.45</td><td>0.72</td><td>66.4</td><td>1.8</td></tr>
+              <tr><th scope="row">Cadrille</th><td>DeepCAD</td><td>3.41</td><td>0.25</td><td>79.4</td><td>0.9</td><td>6.65</td><td>0.58</td><td>67.1</td><td>1.5</td></tr>
+              <tr class="ours"><th scope="row">CADRec <span>Ours</span></th><td>DeepCAD</td><td>0.62</td><td>0.17</td><td>92.7</td><td>0.2</td><td>0.81</td><td>0.19</td><td>85.8</td><td>0.1</td></tr>
+            </tbody>
+            <tbody class="second-setting">
+              <tr><th scope="row">CAD-Recode</th><td>CAD-Recode</td><td>0.76</td><td>0.18</td><td>87.1</td><td>3.8</td><td>1.18</td><td>0.20</td><td>81.9</td><td>4.4</td></tr>
+              <tr><th scope="row">Cadrille</th><td>CAD-Recode</td><td>0.66</td><td>0.18</td><td>87.1</td><td>2.1</td><td>0.65</td><td>0.19</td><td>84.4</td><td>1.1</td></tr>
+              <tr class="ours"><th scope="row">CADRec <span>Ours</span></th><td>CAD-Recode</td><td>0.46</td><td>0.16</td><td>93.3</td><td>0.4</td><td>0.48</td><td>0.17</td><td>84.7</td><td>0.3</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="small-note">CD values are scaled by 10³. IoU and IR are reported in %. ↓ Lower is better; ↑ higher is better. — Not reported. <sup>#</sup> Results taken from the original paper. Single-candidate evaluation; see the paper for test-time sampling with 10 candidates.</p>
+        <details class="more-results"><summary>More results: generalization to diverse shapes <span aria-hidden="true">+</span></summary><figure class="paper-figure"><a href="files/oodvis.pdf" target="_blank" rel="noopener" aria-label="Open additional reconstruction results as a full-resolution PDF"><img src="assets/oodvis.webp" width="2600" height="1257" loading="lazy" alt="Additional CADRec reconstructions of diverse shapes outside the standard reconstruction benchmarks."></a><figcaption>Additional qualitative results from the paper. <a href="files/oodvis.pdf" target="_blank" rel="noopener">View full resolution ↗</a></figcaption></figure></details>
+      </div>
+    </section>
+
+    <section id="data" class="section container">
+      <div class="section-heading"><span class="eyebrow">04 / Data construction</span><h2>Structure is supervision.</h2><p>Convert existing CAD sequences into hierarchical training targets while preserving Boolean dependencies.</p></div>
+      <figure class="paper-figure data-figure"><a href="files/data.pdf" target="_blank" rel="noopener" aria-label="Open the data construction figure as a full-resolution PDF"><img src="assets/data.webp" width="2600" height="1402" loading="lazy" alt="Three stages of data construction: the original modeling sequence, grouping order-sensitive cutting dependencies, and assembling an overlap-based part hierarchy."></a><figcaption><strong>(a)</strong> Start with a ground-truth CAD sequence. <strong>(b)</strong> Group solids with order-sensitive cutting dependencies. <strong>(c)</strong> Merge according to overlap relationships to build a part hierarchy.</figcaption></figure>
+      <div class="data-notes"><p>Each sketch–extrude step becomes a leaf. After resolving difference operations, an overlap graph groups the remaining solids into reusable parts. Large groups are recursively partitioned, with a maximum of six children per group.</p><p><strong>Scope & limitations.</strong> CADRec currently uses a predefined sketch–extrude grammar and bounding-box localization. Richer CAD operations and more flexible decomposition remain future work.</p></div>
+    </section>
+
+    <section id="citation" class="section citation-section">
+      <div class="container citation-inner">
+        <div><span class="eyebrow">05 / Citation</span><h2>Build on CADRec.</h2><p>If you find this work useful in your research, please consider citing our paper.</p><a class="text-link" href="https://github.com/shinodashx/CADRec">Explore the code on GitHub <span aria-hidden="true">↗</span></a></div>
+        <div class="citation-code"><div class="code-heading"><span>BibTeX</span><button id="copy-citation" type="button" hidden>Copy citation</button></div><pre><code id="bibtex">@article{song2026cadrec,
+  title   = {CADRec: Reconstructing a CAD Sequence Recursively
+             with Localized Geometric Contexts},
+  author  = {Song, Haoxuan and Yang, Bingchen and
+             Xiao, Jun and Jiang, Haiyong},
+  journal = {ACM Transactions on Graphics},
+  volume  = {45},
+  number  = {6},
+  articleno = {212},
+  year    = {2026},
+  month   = dec,
+  doi     = {10.1145/3842561}
+}</code></pre><p id="copy-status" class="copy-status" role="status"></p></div>
+      </div>
+    </section>
+  </main>
+  <footer class="container footer"><p><strong>CADRec</strong> · SIGGRAPH Asia 2026 / ACM TOG</p><p>Project page inspired by <a href="https://snitro.github.io/Pointer-CAD-Page/">Pointer-CAD</a>, <a href="https://voyleg.github.io/cadfs/">CADFS</a>, and <a href="https://cadknitter.github.io/">CADKnitter</a>.</p><a href="#">Back to top ↑</a></footer>
+</body>
+</html>
