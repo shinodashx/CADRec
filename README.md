@@ -2,7 +2,7 @@
 
 ### Reconstructing a CAD Sequence Recursively with Localized Geometric Contexts
 
-**SIGGRAPH Asia 2026 · ACM Transactions on Graphics**
+**ACM TOG (SIGGRAPH Asia 2026)**
 
 Haoxuan Song, Bingchen Yang, Jun Xiao, Haiyong Jiang
 
