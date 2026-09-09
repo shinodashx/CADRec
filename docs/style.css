@@ -42,7 +42,7 @@ sup { font-size: .65em; margin-left: 2px; }
 .authors sup { color: var(--muted); }
 .affiliations { display: flex; justify-content: center; flex-wrap: wrap; gap: 2px 26px; margin-top: 8px; color: var(--muted); font-size: 13px; }
 .corresponding { color: var(--muted); font-size: 11px; margin-top: 4px; }
-.actions { display: flex; justify-content: center; gap: 11px; margin-top: 24px; }
+.actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 11px; margin-top: 24px; }
 .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #d4dfe5; border-radius: 7px; padding: 9px 18px; color: var(--ink); font-size: 13px; font-weight: 600; transition: background .15s, border-color .15s; }
 .button:hover { background: #eef4f7; border-color: #9cafb9; text-decoration: none; }
 .button.primary { background: var(--ink); color: white; border-color: var(--ink); }
