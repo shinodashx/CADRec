@@ -25,9 +25,11 @@ Core training and layered recursive testing code for the CADRec grounding + cont
 
 ## Project website
 
-The project page lives in [`docs/`](docs/) and uses plain HTML, CSS, and JavaScript, with no build step or third-party runtime dependencies. GitHub Pages serves the `main` branch's `/docs` directory.
+The project page source lives in [`docs/`](docs/) and uses plain HTML, CSS, and JavaScript, with no build step or third-party runtime dependencies. The live copy is published from [`shinodashx.github.io/dist/CADRec/`](https://github.com/shinodashx/shinodashx.github.io/tree/main/dist/CADRec) through that repository's existing GitHub Pages workflow. This keeps the URL at `https://shinodashx.github.io/CADRec/` without requiring a separate Pages site for the code repository.
 
 To preview locally, run `python3 -m http.server 8080 --directory docs` and open the local server in your browser. Edit `docs/index.html` for paper content, `docs/style.css` for styling, and `docs/script.js` for the accessible result tabs and citation-copy interaction. Video and optimized figures are in `docs/assets/`; the paper and full-resolution figures are in `docs/files/`.
+
+To publish an update, copy the updated contents of `docs/` into `dist/CADRec/` in the `shinodashx.github.io` repository and push its `main` branch. Do not replace the personal homepage's other files.
 
 The paper PDF is compiled from the provided camera-ready LaTeX sources using the current `acmart` class, with duplicated post-preamble publication declarations removed for compilation. Research content is unchanged. Figure previews come from the supplied PDFs; the pipeline uses the paper's final figure. The two supplied video files are identical, so the site includes one copy with English captions.
 
