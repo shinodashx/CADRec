@@ -22,6 +22,7 @@ Core training and layered recursive testing code for the CADRec grounding + cont
 - `cadgendataset0311.py`: CAD dataset and sampling utilities.
 - `test_layer.py`, `recursive_bbox_infer0311.py`, `example1.py`: layered recursive inference and testing utilities.
 - `yaml_config0311.py`: YAML configuration loading and snapshot helpers.
+- [`data_processing/`](data_processing/): final JSON-to-CadQuery preprocessing pipeline, dependency versions, and usage instructions.
 
 ## Project website
 

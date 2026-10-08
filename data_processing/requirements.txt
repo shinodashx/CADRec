@@ -1,0 +1,6 @@
+# Install compatible PyTorch and PyTorch3D builds first; see README.md.
+cadquery==2.6.1
+matplotlib==3.10.7
+numpy==2.2.6
+tqdm==4.67.1
+trimesh==4.9.0

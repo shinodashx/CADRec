@@ -1,0 +1,7 @@
+/cadmllm/
+/cadmllmnew/
+/datalogs/
+*.stl
+*.ply
+*.npy
+failures.json
