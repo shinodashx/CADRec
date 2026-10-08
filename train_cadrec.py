@@ -9,13 +9,13 @@ import contextlib
 from torch.utils.data import ConcatDataset
 from transformers import AutoProcessor, Trainer, TrainingArguments, TrainerCallback
 
-from cadgen0311 import (
+from cadrec import (
     BBOX_GROUNDING_SPECIAL_TOKENS,
     Cadrille,
     collate,
     _build_utonia_data_dict_from_tensors,
 )
-from cadgendataset0311 import (
+from cadrec_dataset import (
     Text2CADDataset,
     CadRecodeDataset,
     DeepCADDataset,
@@ -26,7 +26,7 @@ from cadgendataset0311 import (
     DeepCADTwoStageDataset,
     BalancedMultiTaskSampler,
     HybridBalancedContrastiveSampler)
-from yaml_config0311 import (
+from yaml_config import (
     load_config_with_defaults,
     get_nested,
     save_training_config_snapshot,
@@ -817,7 +817,7 @@ def run(
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    default_config_path = str(Path(__file__).resolve().with_name('cadgen_config.yaml'))
+    default_config_path = str(Path(__file__).resolve().with_name('cadrec_config.yaml'))
     parser.add_argument('--config', type=str, default=default_config_path,
                         help='YAML config path for all train/test parameters.')
     args = parser.parse_args()

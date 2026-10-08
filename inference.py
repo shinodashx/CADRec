@@ -1,5 +1,5 @@
 """
-Single geometry inference script for cadgen0311 checkpoints.
+Single geometry inference script for CADRec checkpoints.
 
 Supports:
 - multitask checkpoints: bbox + code
@@ -8,7 +8,7 @@ Supports:
 - PLY point-cloud input with FPS downsampling
 
 The script can auto-read model-side settings from the checkpoint config saved by
-cadgen0311.Cadrille, and also supports explicit CLI overrides when needed.
+cadrec.Cadrille, and also supports explicit CLI overrides when needed.
 """
 
 import argparse
@@ -21,8 +21,8 @@ import trimesh
 from pytorch3d.ops import sample_farthest_points
 from transformers import AutoProcessor
 
-from cadgen0311 import Cadrille, collate
-from cadgendataset0311 import mesh_to_point_cloud
+from cadrec import Cadrille, collate
+from cadrec_dataset import mesh_to_point_cloud
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -551,7 +551,7 @@ def load_model_with_fallbacks(args):
             last_exc = exc
 
     hint_lines = [
-        "Failed to load checkpoint with current example1.py settings.",
+        "Failed to load checkpoint with current inference.py settings.",
         f"checkpoint: {args.checkpoint_path}",
     ]
     if args.task_mode == "auto" and hints["task_mode"] is None:
@@ -559,7 +559,7 @@ def load_model_with_fallbacks(args):
     if args.pc_encoder_type == "auto" and hints["pc_encoder_type"] is None:
         hint_lines.append("pc encoder type was not stored in checkpoint config, so pass --pc-encoder-type pointbert or --pc-encoder-type utonia explicitly if needed.")
     if args.n_point_tokens is None and hints["n_point_tokens"] is None:
-        hint_lines.append("n-point-tokens was not stored in checkpoint config. Current traincadgen0311.py often uses --n-point-tokens 512; pass it explicitly if your checkpoint was trained that way.")
+        hint_lines.append("n-point-tokens was not stored in checkpoint config. Current train_cadrec.py often uses --n-point-tokens 512; pass it explicitly if your checkpoint was trained that way.")
     if args.part_points_per_bbox is None and hints["part_points_per_bbox"] is None:
         hint_lines.append("If this is a two-stage checkpoint, also confirm --part-points-per-bbox matches training, usually 64.")
     raise RuntimeError(" ".join(hint_lines)) from last_exc
@@ -658,7 +658,7 @@ def generate_text(model, processor, batch, runtime, n_points, max_new_tokens):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Single geometry inference for cadgen0311 checkpoints")
+    parser = argparse.ArgumentParser(description="Single geometry inference for CADRec checkpoints")
     parser.add_argument("--stl-path", type=str, default=None, help="Path to input STL file")
     parser.add_argument("--ply", action="store_true", help="Use PLY point-cloud input mode.")
     parser.add_argument("--ply-path", type=str, default=None, help="Path to input PLY file when --ply is set.")
@@ -677,7 +677,7 @@ def main():
         type=str,
         choices=["auto", "train0311", "cadrecode_test", "legacy_center_scale"],
         default="auto",
-        help="Point normalization mode. auto defaults to train0311, which matches traincadgen0311.py.",
+        help="Point normalization mode. auto defaults to train0311, which matches train_cadrec.py.",
     )
     parser.add_argument(
         "--task-mode",
@@ -707,7 +707,7 @@ def main():
         "--utonia-scale",
         type=float,
         default=2.0,
-        help="Optional Utonia scale override. Current traincadgen0311.py default is 2.0.",
+        help="Optional Utonia scale override. Current train_cadrec.py default is 2.0.",
     )
     parser.add_argument(
         "--utonia-normalize-coord",
@@ -725,7 +725,7 @@ def main():
         "--utonia-use-fourier-fusion",
         type=str2bool,
         default=True,
-        help="Kept for CLI compatibility only. example1.py ignores this because cadgen0311.Cadrille does not accept it.",
+        help="Kept for CLI compatibility only. inference.py ignores this because cadrec.Cadrille does not accept it.",
     )
     parser.add_argument("--max-new-tokens-bbox", type=int, default=3768)
     parser.add_argument("--max-new-tokens-code", type=int, default=3768)
@@ -782,7 +782,7 @@ def main():
     if checkpoint_hints["config_found"]:
         print("Checkpoint config detected and used for auto hints when available.")
     if args.utonia_use_fourier_fusion is not None:
-        print("Note: --utonia-use-fourier-fusion is ignored because cadgen0311.Cadrille has no such init argument.")
+        print("Note: --utonia-use-fourier-fusion is ignored because cadrec.Cadrille has no such init argument.")
     if model_load_kwargs.get("n_point_tokens") == 512 and args.n_point_tokens is None and checkpoint_hints["n_point_tokens"] is None:
         print("Auto fallback applied: loading model with --n-point-tokens 512 because checkpoint config did not provide it.")
 

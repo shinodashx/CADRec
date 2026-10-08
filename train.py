@@ -3,5 +3,5 @@ import runpy
 
 
 if __name__ == '__main__':
-    target = Path(__file__).resolve().with_name('traincadgen0311.py')
+    target = Path(__file__).resolve().with_name('train_cadrec.py')
     runpy.run_path(str(target), run_name='__main__')

@@ -20,8 +20,8 @@ from tqdm.auto import tqdm
 from torch.utils.data import DataLoader, Dataset
 from transformers import AutoProcessor
 
-import recursive_bbox_infer0311 as recursive_infer
-from yaml_config0311 import (
+import recursive_bbox_infer as recursive_infer
+from yaml_config import (
     find_latest_saved_config,
     get_nested,
     load_config_with_defaults,
@@ -581,7 +581,7 @@ class _CodeLeafDataset(Dataset):
 
 
 def _task_loader_collate(samples, *, processor, runtime: dict, n_points: int):
-    from cadgen0311 import collate
+    from cadrec import collate
 
     valid_samples = [sample for sample in samples if sample.get("batch_input") is not None]
     batch_inputs = [sample["batch_input"] for sample in valid_samples]

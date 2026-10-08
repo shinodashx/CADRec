@@ -10,5 +10,5 @@ export CUDA_VISIBLE_DEVICES=1
 export HF_ENDPOINT=https://hf-mirror.com
 export PYTHONUNBUFFERED=1
 
-python train.py --config cadgen_config.yaml > "$LOG_FILE" 2>&1 &
+python train.py --config cadrec_config.yaml > "$LOG_FILE" 2>&1 &
 echo $! > "${LOG_FILE%.log}.pid"

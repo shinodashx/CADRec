@@ -11,7 +11,7 @@ import trimesh
 from pytorch3d.ops import sample_farthest_points
 from transformers import AutoProcessor
 
-from example1 import (
+from inference import (
     TASK_DESCRIPTIONS,
     _extract_json_block,
     load_model_with_fallbacks,
@@ -22,7 +22,7 @@ from example1 import (
     normalize_task_mode,
     _extract_points_and_normals_from_geometry,
 )
-from yaml_config0311 import load_config_with_defaults, get_nested
+from yaml_config import load_config_with_defaults, get_nested
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -654,7 +654,7 @@ def _make_child_node_id(parent_node_id: str, child_name: str, child_index: int) 
 
 
 def _generate_texts(model, processor, batch, runtime, n_points, max_new_tokens):
-    from cadgen0311 import collate
+    from cadrec import collate
 
     if not batch:
         return []
@@ -1106,8 +1106,8 @@ def _validate_args(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Recursive bbox inference for cadgen0311 checkpoints")
-    parser.add_argument("--config", type=str, default=str(Path(__file__).resolve().with_name("cadgen_config.yaml")))
+    parser = argparse.ArgumentParser(description="Recursive bbox inference for CADRec checkpoints")
+    parser.add_argument("--config", type=str, default=str(Path(__file__).resolve().with_name("cadrec_config.yaml")))
     parser.add_argument("--checkpoint-path", type=str, required=True, help="Path to trained checkpoint directory")
     parser.add_argument("--output-dir", type=str, default="./recursive_bbox_output")
     parser.add_argument("--npy-path", type=str, default=None, help="Normalized xyz+normal npy input")

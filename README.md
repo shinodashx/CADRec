@@ -16,13 +16,24 @@ Core training and layered recursive testing code for the CADRec grounding + cont
 
 ## Main files
 
-- `cadgen_config.yaml`: training configuration with contrastive learning and bbox grounding enabled.
-- `train.py`, `train.sh`, `traincadgen0311.py`: training entrypoints.
-- `cadgen0311.py`: model, collate, contrastive loss, and bbox grounding logic.
-- `cadgendataset0311.py`: CAD dataset and sampling utilities.
-- `test_layer.py`, `recursive_bbox_infer0311.py`, `example1.py`: layered recursive inference and testing utilities.
-- `yaml_config0311.py`: YAML configuration loading and snapshot helpers.
+- `cadrec_config.yaml`: training configuration with contrastive learning and bbox grounding enabled.
+- `train.py`, `train.sh`, `train_cadrec.py`: training entrypoints.
+- `cadrec.py`: model, collate, contrastive loss, and bbox grounding logic.
+- `cadrec_dataset.py`: CAD dataset and sampling utilities.
+- `test_layer.py`, `recursive_bbox_infer.py`, `inference.py`: layered recursive inference and testing utilities.
+- `yaml_config.py`: YAML configuration loading and snapshot helpers.
 - [`data_processing/`](data_processing/): final JSON-to-CadQuery preprocessing pipeline, dependency versions, and usage instructions.
+
+Source filenames use stable, date-free names. Checkpoint metadata, dataset versions,
+and external data/weight paths are unchanged by the rename. Set the paths in
+`cadrec_config.yaml` for your environment before training.
+
+```bash
+python train.py --config cadrec_config.yaml
+python inference.py --help
+python recursive_bbox_infer.py --help
+python test_layer.py --help
+```
 
 ## Project website
 
