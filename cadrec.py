@@ -1,4 +1,5 @@
 import sys
+import os
 import hashlib
 import json
 from pathlib import Path
@@ -17,10 +18,6 @@ from transformers.models.qwen2_vl.modeling_qwen2_vl import Qwen2VLCausalLMOutput
 PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-
-from utils.config import cfg_from_yaml_file
-from tools import builder
-
 
 try:
     from scipy.optimize import linear_sum_assignment
@@ -860,30 +857,48 @@ class PointBertEncoder(nn.Module):
         dvae_ckpt_path=None):
         super().__init__()
 
-        default_config = Path("/data/songhx24/Project/cadgen_pointbert/cfgs/Mixup_models/Point-BERT.yaml")
-        self.config_path = Path(config_path) if config_path is not None else default_config
+        self.pointbert_root = Path(
+            pointbert_root if pointbert_root is not None
+            else os.environ.get('POINTBERT_ROOT', PROJECT_ROOT / 'Point-BERT')
+        ).expanduser().resolve()
+        self.config_path = Path(
+            config_path if config_path is not None
+            else os.environ.get('POINTBERT_CONFIG', self.pointbert_root / 'cfgs/Mixup_models/Point-BERT.yaml')
+        ).expanduser().resolve()
+        self.dvae_ckpt_path = Path(
+            dvae_ckpt_path if dvae_ckpt_path is not None
+            else os.environ.get('POINTBERT_DVAE_CHECKPOINT', self.pointbert_root / 'ckpt/dVAE.pth')
+        ).expanduser().resolve()
+        self.ckpt_path = Path(
+            ckpt_path if ckpt_path is not None
+            else os.environ.get('POINTBERT_CHECKPOINT', self.pointbert_root / 'ckpt/Point-BERT.pth')
+        ).expanduser().resolve()
 
-        # pointbert/utils/config.py signature on server does not accept repo_root
-        config = cfg_from_yaml_file(str(self.config_path))
+        for path in (self.config_path, self.dvae_ckpt_path, self.ckpt_path):
+            if not path.is_file():
+                raise FileNotFoundError(
+                    f'Point-BERT asset not found: {path}. Set POINTBERT_ROOT or the '
+                    'POINTBERT_CONFIG / POINTBERT_DVAE_CHECKPOINT / POINTBERT_CHECKPOINT overrides.')
 
-        # Hardcode dVAE and Point-BERT checkpoints (same as example.py layout)
-        dvae_path = Path("/data/songhx24/Project/cadgen_pointbert/ckpt/dVAE.pth")
-        self.dvae_ckpt_path = dvae_path
+        if str(self.pointbert_root) not in sys.path:
+            sys.path.insert(0, str(self.pointbert_root))
+        import yaml
+        from easydict import EasyDict
+        from tools import builder
 
-        config.model.dvae_config.ckpt = str(dvae_path)
+        # Only the model is needed; dataset _base_ paths belong to Point-BERT training.
+        with self.config_path.open(encoding='utf-8') as stream:
+            model_config = EasyDict(yaml.safe_load(stream)['model'])
+        model_config.dvae_config.ckpt = str(self.dvae_ckpt_path)
 
-        ckpt_path_resolved = Path("/data/songhx24/Project/cadgen_pointbert/ckpt/Point-BERT.pth")
-        self.ckpt_path = ckpt_path_resolved
-
-
-        pointbert_model = builder.model_builder(config.model)
-        self._load_pointbert_weights(pointbert_model, ckpt_path_resolved)
+        pointbert_model = builder.model_builder(model_config)
+        self._load_pointbert_weights(pointbert_model, self.ckpt_path)
         pointbert_model.eval()
 
         self.group_divider = pointbert_model.group_divider
         self.transformer = pointbert_model.transformer_q
         self.pointbert_dim = self.transformer.trans_dim
-        self.num_groups = getattr(pointbert_model, 'num_group', config.model.dvae_config.num_group)
+        self.num_groups = getattr(pointbert_model, 'num_group', model_config.dvae_config.num_group)
 
         self.knn_interpolator = KNNInterpolator(k=k_neighbors, temperature=0.1)
         self.feature_fusion = PointFeatureFusion(
@@ -967,10 +982,15 @@ class PointBertEncoder(nn.Module):
         return remapped_state
 
     def reload_backbone_weights(self):
-        config = cfg_from_yaml_file(str(self.config_path))
-        config.model.dvae_config.ckpt = str(self.dvae_ckpt_path)
+        import yaml
+        from easydict import EasyDict
+        from tools import builder
 
-        pointbert_model = builder.model_builder(config.model)
+        with self.config_path.open(encoding='utf-8') as stream:
+            model_config = EasyDict(yaml.safe_load(stream)['model'])
+        model_config.dvae_config.ckpt = str(self.dvae_ckpt_path)
+
+        pointbert_model = builder.model_builder(model_config)
         self._load_pointbert_weights(pointbert_model, self.ckpt_path)
         pointbert_model.eval()
 
@@ -1124,9 +1144,18 @@ class UtoniaEncoder(nn.Module):
         self.hidden_size = int(hidden_size)
         self.n_stage1_tokens = int(num_tokens)
         self.num_tokens = self.n_stage1_tokens
+        if ckpt_path is None:
+            ckpt_path = os.environ.get('UTONIA_CHECKPOINT')
+        if ckpt_path is not None:
+            ckpt_path = Path(ckpt_path).expanduser().resolve()
+            if not ckpt_path.is_file():
+                raise FileNotFoundError(f'Utonia checkpoint not found: {ckpt_path}')
+        if download_root is None:
+            download_root = os.environ.get('UTONIA_DOWNLOAD_ROOT')
         self.model_name = str(ckpt_path) if ckpt_path is not None else str(model_name)
         self.repo_id = repo_id
-        self.download_root = download_root
+        self.download_root = (
+            str(Path(download_root).expanduser().resolve()) if download_root is not None else None)
         self.freeze_backbone = bool(freeze_backbone)
         self.scale = float(scale)
         self.normalize_coord = bool(normalize_coord)

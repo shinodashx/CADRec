@@ -13,11 +13,12 @@ common:
 
 train:
   paths:
-    data_path: /data/songhx24/Dataset
-    log_path: /data/songhx24/Project/utonia_cadgen/utonia_grounding/workdir_groundingV2
+    # Replace these example paths in your own *.local.yaml configuration.
+    data_path: ./datasets
+    log_path: ./work_dirs/cadrec
     resume: null
-    model_path: /data/songhx24/Project/cadgen_utonia/work_dirs_utonia0319/checkpoint-40000
-    # model_path: null
+    # Initialization weights; use null only to select common.model.base_model_path.
+    model_path: ./checkpoints/cadrec
   task:
     mode: pc
     use_text: false
@@ -31,7 +32,7 @@ train:
     eval_split: val
     deepcad_root_subdir: data/cad_cadqueryV1.2
     deepcadv2_root_subdir: data/cad_cadqueryV2.2
-    cadrecode_v15our_root_subdir: /nas1/songhx24/Dataset/CAARECODE/cad-recode-v1.5-process-new
+    cadrecode_v15our_root_subdir: cad-recode-v1.5-process-new
     deepcad_split_json: train_val_test_split_V1.2.json
     cad_recode_subdir: cad-recode-v1.5
     text2cad_subdir: text2cad

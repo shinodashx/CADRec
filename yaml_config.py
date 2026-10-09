@@ -25,8 +25,8 @@ DEFAULT_CONFIG = {
     },
     'train': {
         'paths': {
-            'data_path': '/data/songhx24/Dataset',
-            'log_path': './work_dirs_utonia0319',
+            'data_path': './datasets',
+            'log_path': './work_dirs/cadrec',
             'resume': None,
             'model_path': None,
         },
@@ -44,7 +44,7 @@ DEFAULT_CONFIG = {
             'eval_split': 'val',
             'deepcad_root_subdir': 'data/cad_cadqueryV1.2',
             'deepcadv2_root_subdir': 'data/cad_cadqueryV2',
-            'cadrecode_v15our_root_subdir': '/nas1/songhx24/Dataset/CAARECODE/cad-recode-v1.5-process-new',
+            'cadrecode_v15our_root_subdir': 'cad-recode-v1.5-process-new',
             'deepcad_split_json': 'train_val_test_split_V1.2.json',
             'cad_recode_subdir': 'cad-recode-v1.5',
             'text2cad_subdir': 'text2cad',

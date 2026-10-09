@@ -255,7 +255,7 @@ def resolve_training_setup(
                 data_path,
                 dataset_config.get(
                     'cadrecode_v15our_root_subdir',
-                    '/nas1/songhx24/Dataset/CAARECODE/cad-recode-v1.5-process-new'))
+                    'cad-recode-v1.5-process-new'))
             split_json_path = None
         else:
             deepcad_root = _resolve_data_subpath(
@@ -841,7 +841,7 @@ if __name__ == '__main__':
     log_path = train_paths_cfg.get('log_path')
     if not log_path:
         raise ValueError('train.paths.log_path must be set in YAML config.')
-    data_path = train_paths_cfg.get('data_path', '/data/songhx24/Dataset')
+    data_path = train_paths_cfg.get('data_path', './datasets')
     resolved_setup = resolve_training_setup(
         data_path=data_path,
         mode=train_task_cfg.get('mode', 'pc'),

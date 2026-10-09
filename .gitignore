@@ -16,3 +16,15 @@ checkpoint-*/
 *.log
 *.pid
 .DS_Store
+
+# Machine-specific configuration, dependencies, datasets, and run artifacts.
+*.local.yaml
+*.local.yml
+run_config*.yaml
+/datasets/
+/checkpoints/
+/outputs/
+/exampleply/
+/recursive_bbox_output/
+/Point-BERT/
+/Utonia-main/

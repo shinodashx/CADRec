@@ -1,14 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-LOG_DIR="/data/songhx24/Project/utonia_cadgen/utonia_grounding/train_logs"
-mkdir -p $LOG_DIR
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="${LOG_DIR:-${SCRIPT_DIR}/train_logs}"
+PYTHON="${PYTHON:-python}"
+command -v "$PYTHON" > /dev/null
+mkdir -p -- "$LOG_DIR"
 
 TIME_STR=$(date +'%Y%m%d_%H%M%S')
-LOG_FILE="${LOG_DIR}/run_${TIME_STR}.log"
+LOG_FILE="${LOG_DIR}/run_${TIME_STR}_$$.log"
 
-export CUDA_VISIBLE_DEVICES=1
-export HF_ENDPOINT=https://hf-mirror.com
-export PYTHONUNBUFFERED=1
-
-python train.py --config cadrec_config.yaml > "$LOG_FILE" 2>&1 &
-echo $! > "${LOG_FILE%.log}.pid"
+nohup "$PYTHON" -u "${SCRIPT_DIR}/train.py" --config "${SCRIPT_DIR}/cadrec_config.yaml" "$@" > "$LOG_FILE" 2>&1 < /dev/null &
+PID=$!
+printf '%s\n' "$PID" > "${LOG_FILE%.log}.pid"
+printf 'Started training (PID %s).\nLog: %s\n' "$PID" "$LOG_FILE"
